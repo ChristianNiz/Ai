@@ -22,16 +22,9 @@
 
 body{
   font-family:Inter, sans-serif;
-  background:#000000;
+  background:radial-gradient(circle at 30% 30%, #0a0f25, #03040a 60%);
   color:var(--text);
   overflow-x:hidden;
-}
-
-canvas{
-  position:fixed;
-  top:0;
-  left:0;
-  z-index:-1;
 }
 
 canvas{
@@ -150,7 +143,7 @@ footer{
 </head>
 <body>
 
-<canvas id="matrix"></canvas>
+<canvas id="stars"></canvas>
 
 <header>
 <div class="logo">AI NEXUS</div>
@@ -205,45 +198,49 @@ emerging architectures shaping the next epoch of intelligence.
 
 <script>
 
-const canvas = document.getElementById("matrix");
+const canvas = document.getElementById("stars");
 const ctx = canvas.getContext("2d");
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const letters = "アァカサタナハマヤャラワ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const fontSize = 16;
-const columns = canvas.width / fontSize;
+let stars = [];
 
-const drops = [];
-for(let i = 0; i < columns; i++){
-  drops[i] = Math.random()*canvas.height;
+for(let i=0;i<120;i++){
+  stars.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    r:Math.random()*1.2,
+    d:Math.random()*0.5
+  });
 }
 
 function draw(){
-  ctx.fillStyle = "rgba(0,0,0,0.05)";
-  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.clearRect(0,0,canvas.width,canvas.height);
 
-  ctx.fillStyle = "#00ff41";
-  ctx.font = fontSize + "px monospace";
+  ctx.fillStyle="#8a7dff";
 
-  for(let i=0;i<drops.length;i++){
-    const text = letters.charAt(Math.floor(Math.random()*letters.length));
-    ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+  stars.forEach(s=>{
+    ctx.beginPath();
+    ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctx.fill();
 
-    if(drops[i]*fontSize > canvas.height && Math.random() > 0.975){
-      drops[i] = 0;
+    s.y+=s.d;
+
+    if(s.y>canvas.height){
+      s.y=0;
+      s.x=Math.random()*canvas.width;
     }
+  });
 
-    drops[i]++;
-  }
+  requestAnimationFrame(draw);
 }
 
-setInterval(draw, 33);
+draw();
 
 window.addEventListener("resize",()=>{
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
 });
 
 </script>
